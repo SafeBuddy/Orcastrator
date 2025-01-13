@@ -1,6 +1,9 @@
-
 from flask import Flask, request, jsonify
-# import requests
+from UserManagerAPI import create_user, get_user
+import requests
+from jwt_manager import *
+
+USER_MANAGER_API_URL = "http://localhost:6000"
 
 app = Flask(__name__)
 
@@ -21,18 +24,47 @@ def submit_report():
 # New User - ask sign-up request from User Manger
 @app.route("/sign-up", methods=["POST"])
 def sign_up():
-   return jsonify({"message": "User signed up successfully"}), 200
+    data = request.get_json()
+    if not data:
+         return jsonify({'eror':'No input data provided'}),400
+    
+    response = requests.post(f"""{USER_MANAGER_API_URL}/users""", json=data)
+    
+    if response.status_code != 200:
+        return jsonify(response.json()), response.status_code
+    
+    username = response.json().get('username')
+    token = generate_jwt(username)
+
+    return jsonify({"message": "User signed up successfully", "token": token}), response.status_code 
 
 
 # Existing User - ask sign-in request from User Manger
 @app.route("/sign-in", methods=["POST"])
 def sign_in():
-    return jsonify({"message": "User signed in successfully"}), 200
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No input data provided'}), 400
+
+    response = requests.post(f"{USER_MANAGER_API_URL}/authenticate", json=data)
+
+    print(f"response status code: {response.status_code}")
+    print(f"response: {response.json()}")
+
+
+    if response.status_code != 200:
+        return jsonify({'error': response.json().get('message', 'Authentication failed')}), response.status_codeget 
+
+    username = response.json().get('username')
+    token = generate_jwt(username)
+
+    return jsonify({"message": "User signed in successfully", "token": token}), 200
+
 
 
 # הרצת ה-Orchestrator
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=7000)
 
 
 
