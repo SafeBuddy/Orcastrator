@@ -48,12 +48,8 @@ def sign_in():
 
     response = requests.post(f"{USER_MANAGER_API_URL}/authenticate", json=data)
 
-    print(f"response status code: {response.status_code}")
-    print(f"response: {response.json()}")
-
-
     if response.status_code != 200:
-        return jsonify({'error': response.json().get('message', 'Authentication failed')}), response.status_codeget 
+        return response.json(), response.status_code
 
     username = response.json().get('username')
     token = generate_jwt(username)
