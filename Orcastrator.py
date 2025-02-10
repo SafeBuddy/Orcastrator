@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
-from UserManagerAPI import create_user, get_user
+
+# from UserManagerAPI import create_user, get_user
 import requests
 from jwt_manager import *
 
 USER_MANAGER_API_URL = "http://localhost:6000"
-LLM_MANAGER_URL = "http://localhost:5001"
-REPORT_MANAGER_URL ="http://localhost:5000"
-ALERT_MANAGER_URL = "http://localhost:5005"
+LLM_MANAGER_URL = "http://localhost:5000"
+REPORT_MANAGER_URL ="http://localhost:5002"
+ALERT_MANAGER_URL = "http://localhost:5001"
 
 app = Flask(__name__)
 
@@ -209,7 +210,7 @@ def sign_in():
 
 # Run Orchestrator
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=7000)
+    app.run(host='127.0.0.1', port=3000)
 
 
 
